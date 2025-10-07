@@ -5,6 +5,7 @@ import authRoutes from "./routes/authRoutes.js";
 import questionRoutes from "./routes/questionRoutes.js";
 import answerRoutes from "./routes/answerRoutes.js";
 import { authenticate } from "./middleware/authMiddleware.js";
+import cors from "cors"; // <<< ADD THIS
 
 dotenv.config();
 
