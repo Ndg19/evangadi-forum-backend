@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import db from "./config/dbConfig.js"; 
+import db from "./config/dbConfig.js";
 import authRoutes from "./routes/authRoutes.js";
 import questionRoutes from "./routes/questionRoutes.js";
 import answerRoutes from "./routes/answerRoutes.js";
@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 // CORS: allow frontend from env variable + local dev
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://your-frontend-domain.com"],
   })
 );
 
@@ -42,8 +42,8 @@ app.use(
 })();
 // Routes
 app.use("/api/user", authRoutes); // Authentication routes (login, signup, checkUser)
-app.use("/api/question",authenticate , questionRoutes); // Question routes
-app.use("/api/answer",authenticate , answerRoutes); // Answer routes
+app.use("/api/question", authenticate, questionRoutes); // Question routes
+app.use("/api/answer", authenticate, answerRoutes); // Answer routes
 
 // Base route
 app.get("/", (req, res) => {
