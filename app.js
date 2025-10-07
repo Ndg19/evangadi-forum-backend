@@ -19,8 +19,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 // CORS: allow frontend from env variable + local dev
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL || "http://localhost:5173"], // local dev fallback
-    credentials: true,
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
   })
 );
 
