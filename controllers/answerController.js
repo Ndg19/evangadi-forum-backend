@@ -1,5 +1,7 @@
 import db from "../config/dbConfig.js";
 
+
+
 // Get Answers Controller
 export const getAnswers = async (req, res) => {
   const { question_id } = req.params;

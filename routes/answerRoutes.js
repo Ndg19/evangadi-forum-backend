@@ -6,4 +6,6 @@ const router = express.Router();
 router.get("/:question_id", getAnswers);
 router.post("/", postAnswer);
 
+
+// export default router;
 export default router;

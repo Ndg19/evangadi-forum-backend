@@ -20,6 +20,6 @@ export const authenticate = (req, res, next) => {
   } catch (err) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
-      .json({ message: "Authentication invalid" });
+      .json({ message: "Invalid or expired token" });
   }
 };

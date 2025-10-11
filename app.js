@@ -1,11 +1,11 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import db from "./config/dbConfig.js";
 import authRoutes from "./routes/authRoutes.js";
 import questionRoutes from "./routes/questionRoutes.js";
 import answerRoutes from "./routes/answerRoutes.js";
 import { authenticate } from "./middleware/authMiddleware.js";
-import cors from "cors"; // <<< ADD THIS
 
 dotenv.config();
 
@@ -19,7 +19,10 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 // CORS: allow frontend from env variable + local dev
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://your-frontend-domain.com"],
+    origin: [
+      "http://localhost:5173",
+      "https://grouponeevangadiforumproject.netlify.app",
+    ],
   })
 );
 
@@ -44,6 +47,8 @@ app.use(
 app.use("/api/user", authRoutes); // Authentication routes (login, signup, checkUser)
 app.use("/api/question", authenticate, questionRoutes); // Question routes
 app.use("/api/answer", authenticate, answerRoutes); // Answer routes
+// app.use("/api/question", authenticate, questionRoutes);
+
 
 // Base route
 app.get("/", (req, res) => {
@@ -54,7 +59,7 @@ app.get("/", (req, res) => {
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
-    error: err.name || "InternalServerError",
+    error: err.name || "Internal Server Error",
     message: err.message || "An unexpected error occurred.",
   });
 });

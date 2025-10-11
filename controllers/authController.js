@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import db from "../config/dbConfig.js";
 import { StatusCodes } from "http-status-codes";
+import jwt from "jsonwebtoken";
 
 // Register Controller
 export const register = async (req, res) => {
@@ -10,7 +10,7 @@ export const register = async (req, res) => {
     if (!username || !first_name || !last_name || !email || !password) {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "Please provide all required fields" });
+        .json({ message: "All fields are required" });
     }
 
     const [userExists] = await db.query("SELECT * FROM users WHERE email = ?", [
@@ -19,14 +19,18 @@ export const register = async (req, res) => {
     if (userExists.length > 0) {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "User already registered" });
+        .json({ message: "Email already registered" });
     }
+
     if (password.length < 8) {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "Password must be at least 8 characters" });
+        .json({ message: "Password must be at least 8 characters long" });
     }
+
+    // Hash password before saving user to database
     const hashedPassword = await bcrypt.hash(password, 10);
+
     await db.query(
       "INSERT INTO users (username, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?)",
       [username, first_name, last_name, email, hashedPassword]
@@ -43,25 +47,33 @@ export const register = async (req, res) => {
   }
 };
 
+
+
 // Login Controller
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("login");
-    if (!email || !password)
+    if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
+    }
 
     const [user] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
-    if (!user || user.length === 0)
+
+    if (!user || user.length === 0) {
       return res.status(400).json({ message: "Invalid credentials" });
+    }
 
     const existingUser = user[0];
-    const isMatch = await bcrypt.compare(password, existingUser.password);
-    if (!isMatch)
-      return res.status(400).json({ message: "Invalid credentials" });
 
+    // Compare hashed password with stored hash
+    const isMatch = await bcrypt.compare(password, existingUser.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // Generate JWT token for authenticated user
     const token = jwt.sign(
       { id: existingUser.user_id, email: existingUser.email },
       process.env.JWT_SECRET,
@@ -83,10 +95,11 @@ export const login = async (req, res) => {
   }
 };
 
+
 // Check User Controller
 export const checkUser = async (req, res) => {
   try {
-    //  No need to extract token again, middleware already did it
+    // Middleware attaches req.user, so we can query DB for user details
     const userId = req.user.id;
 
     const [user] = await db.query(
@@ -110,3 +123,4 @@ export const checkUser = async (req, res) => {
       .json({ message: "Server error" });
   }
 };
+

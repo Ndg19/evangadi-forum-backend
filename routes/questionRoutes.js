@@ -2,13 +2,15 @@ import express from "express";
 import {
   getAllQuestions,
   getSingleQuestion,
-  createQuestion,
+  updateQuestion,
 } from "../controllers/questionController.js";
 
 const router = express.Router();
 
 router.get("/", getAllQuestions);
 router.get("/:question_id", getSingleQuestion);
-router.post("/", createQuestion);
+
+// PUT route for editing a question
+router.put("/edit/:question_id", updateQuestion);
 
 export default router;
