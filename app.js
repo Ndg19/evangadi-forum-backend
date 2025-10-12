@@ -1,4 +1,5 @@
 import express from "express";
+import compression from "compression";
 import cors from "cors";
 import dotenv from "dotenv";
 import db from "./config/dbConfig.js";
@@ -11,6 +12,8 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+// Enable gzip compression (MUST come early)
+app.use(compression());
 
 // Middleware
 app.use(express.json()); // Parse JSON request bodies
