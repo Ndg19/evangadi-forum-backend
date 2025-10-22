@@ -21,10 +21,14 @@ app.use(compression());
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
-// CORS: allow frontend from env variable + local dev
+
+// CORS: allow localhost + frontend if FRONTEND_URL exists
+const allowedOrigins = ["http://localhost:5173"];
+if (FRONTEND_URL) allowedOrigins.push(FRONTEND_URL);
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", FRONTEND_URL],
+    origin: allowedOrigins,
   })
 );
 
